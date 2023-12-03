@@ -38,3 +38,9 @@ release *ARGS:
 run target *ARGS:
   @echo "Starting {{target}} on {{os()}}".
   @cargo run --bin {{target}} {{ARGS}}
+
+flamegraph target:
+  @cargo flamegraph --profile flamegraph --root --bin {{target}} -o ./target/flamegraph/{{target}}.svg
+
+dhat target:
+  @cargo run --profile dhat --features dhat-heap --bin {{target}}

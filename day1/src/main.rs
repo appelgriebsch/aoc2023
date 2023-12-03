@@ -3,6 +3,10 @@ use std::{fs::File, io::Read, path::Path};
 mod part1;
 mod part2;
 
+#[cfg(feature = "dhat-heap")]
+#[global_allocator]
+static ALLOC: dhat::Alloc = dhat::Alloc;
+
 fn parse<F>(input: &str, parse_func: F) -> u32
 where
     F: Fn(&str) -> u32,
@@ -11,6 +15,9 @@ where
 }
 
 fn main() {
+    #[cfg(feature = "dhat-heap")]
+    let _profiler = dhat::Profiler::new_heap();
+
     let file_path = Path::new(env!("CARGO_MANIFEST_DIR")).join("input.txt");
     let mut file = File::open(file_path).expect("Failed to open input.txt");
     let mut buf = String::with_capacity(file.metadata().unwrap().len() as usize);
