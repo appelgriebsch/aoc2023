@@ -14,7 +14,7 @@ pub(crate) fn parse(line: &str) -> u32 {
         .next();
     match (start, end) {
         (Some(start), Some(end)) => start * 10 + end,
-        _ => 0,
+        _ => panic!("No numbers found"),
     }
 }
 

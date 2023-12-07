@@ -1,5 +1,20 @@
 use std::collections::HashMap;
 
+#[derive(Debug, Eq, PartialEq)]
+struct NumericToken(usize, u32);
+
+impl Ord for NumericToken {
+    fn cmp(&self, other: &Self) -> std::cmp::Ordering {
+        self.0.cmp(&other.0)
+    }
+}
+
+impl PartialOrd for NumericToken {
+    fn partial_cmp(&self, other: &Self) -> Option<std::cmp::Ordering> {
+        Some(self.cmp(other))
+    }
+}
+
 pub(crate) fn parse(line: &str) -> u32 {
     let map = HashMap::from([
         ("zero", 0),
@@ -17,13 +32,13 @@ pub(crate) fn parse(line: &str) -> u32 {
         .keys()
         .map(|key| {
             if let Some(pos) = line.find(*key) {
-                (pos, map[key])
+                NumericToken(pos, map[key])
             } else {
-                (usize::MAX, 0)
+                NumericToken(usize::MAX, 0)
             }
         })
         .chain(line.find(char::is_numeric).map(|pos| {
-            (
+            NumericToken(
                 pos,
                 line.chars()
                     .nth(pos)
@@ -37,13 +52,13 @@ pub(crate) fn parse(line: &str) -> u32 {
         .keys()
         .map(|key| {
             if let Some(pos) = line.rfind(*key) {
-                (pos, map[key])
+                NumericToken(pos, map[key])
             } else {
-                (usize::MIN, 0)
+                NumericToken(usize::MIN, 0)
             }
         })
         .chain(line.rfind(char::is_numeric).map(|pos| {
-            (
+            NumericToken(
                 pos,
                 line.chars()
                     .nth(pos)
@@ -55,8 +70,10 @@ pub(crate) fn parse(line: &str) -> u32 {
         .max();
 
     match (start, end) {
-        (Some((_, start)), Some((_, end))) => start * 10 + end,
-        _ => 0,
+        (Some(NumericToken(_, start_value)), Some(NumericToken(_, end_value))) => {
+            start_value * 10 + end_value
+        }
+        _ => panic!("No numeric token found"),
     }
 }
 
