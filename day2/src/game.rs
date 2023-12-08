@@ -20,13 +20,18 @@ impl Game {
             draws: draws.to_vec(),
         }
     }
-
     pub fn id(&self) -> u8 {
         self.id
     }
-
     pub fn draws(&self) -> &[Draw] {
         &self.draws
+    }
+    pub fn max_draw(&self) -> Draw {
+        let max_blue = self.draws.iter().map(Draw::blue).max().unwrap_or(0);
+        let max_green = self.draws.iter().map(Draw::green).max().unwrap_or(0);
+        let max_red = self.draws.iter().map(Draw::red).max().unwrap_or(0);
+
+        Draw::new(max_blue, max_green, max_red)
     }
 }
 
@@ -36,6 +41,15 @@ impl Draw {
     }
     pub fn can_contain(&self, other: &Self) -> bool {
         self.blue >= other.blue && self.green >= other.green && self.red >= other.red
+    }
+    pub(crate) fn blue(&self) -> u8 {
+        self.blue
+    }
+    pub(crate) fn green(&self) -> u8 {
+        self.green
+    }
+    pub(crate) fn red(&self) -> u8 {
+        self.red
     }
 }
 
