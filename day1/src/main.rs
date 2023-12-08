@@ -11,7 +11,11 @@ fn parse<F>(input: &str, parse_func: F) -> u32
 where
     F: Fn(&str) -> u32,
 {
-    input.lines().map(parse_func).sum()
+    input
+        .lines()
+        .filter(|line| !line.trim().is_empty())
+        .map(parse_func)
+        .sum()
 }
 
 fn main() {
